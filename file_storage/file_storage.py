@@ -56,6 +56,9 @@ def delete_file():
     if not upload:
         abort(404, 'File not found')
 
+    if upload['file_owner'] != request.authorization.username:
+        abort(401, 'Not authorized to do so')
+
     # Remove file
     try:
         os.remove(upload['file_full_path'])

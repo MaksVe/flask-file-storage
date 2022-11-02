@@ -100,6 +100,20 @@ def test_delete(client, app, test_file):
     assert response.status_code == 200
 
 
+def test_delete_by_wrong_user(client, app, test_file):
+    file_hash = 'test_file'
+    _create_test_file_in_db(app, file_hash, test_file)
+
+    credentials = base64.b64encode(b"other:other").decode('utf-8')
+    data = {'file_hash': file_hash}
+    response = client.post(
+        '/delete',
+        headers={"Authorization": "Basic {}".format(credentials)},
+        data=data)
+    assert response.status_code == 401
+
+
+
 def _create_test_file_in_db(app, file_hash, test_file):
     file_upload_path = Path(test_file).parent
     file_full_path = Path(test_file)
